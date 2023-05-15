@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { getSentiment } from './services/getSentiment';
 import moment from 'moment';
+import { getDailyAverage } from './services/getDailyAverage';
 
 const apiKey = process.env.NEWS_API_KEY;
 
@@ -18,7 +19,7 @@ interface NewsItem {
 
 interface DataItem {
   id: string;
-  data: Array<{ x: Date; y: number }>;
+  data: Array<{ x: string; y: number }>;
 }
 
 const scrapeResponse = async () => {
@@ -57,6 +58,7 @@ const scrapeResponse = async () => {
     for (let i = 0; i < dataBySource.length; i++) {
       console.log(dataBySource[i]);
       dataBySource[i]['data'].sort((a, b) => moment(a.x).diff(moment(b.x)));
+      dataBySource[i]['data'] = getDailyAverage(dataBySource[i]['data']);
     }
 
     return dataBySource;
